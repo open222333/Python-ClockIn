@@ -1,0 +1,25 @@
+[INFO]
+; google表單網址
+FORM_URL=
+
+; driver路徑
+DRIVER_PATH=
+
+; 使用者資訊json位置 預設 config/setting.json
+; USER_SETTING_PATH=
+
+; log紀錄位置 預設 log/2023-01-01.log
+; LOG_FILE_PATH=
+
+; error log紀錄位置 預設 log/error-2023-01-01.log
+; ERROR_LOG_FILE_PATH=
+
+[XPATH]
+NAME_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input
+SHIFT_M_ON_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[1]/div/div
+SHIFT_M_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[1]/div/div
+SHIFT_N_ON_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[2]/div/div
+SHIFT_N_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[2]/div/div
+SHIFT_G_ON_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[3]/div/div
+SHIFT_G_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[3]/div/div
+SUBMIT_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span

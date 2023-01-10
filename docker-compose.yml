@@ -1,9 +1,11 @@
 version: '3'
 services:
-  api:
-    container_name: api
-    build: ./
-    hostname: api-container
+  clock-bot:
+    container_name: clock-bot
+    build: .
+    hostname: clock-bot
     volumes:
       - .:/usr/src/app
-    command: ping 127.0.0.1
+      - ./config:/usr/src/app/config
+      - ./log:/usr/src/app/log
+    command: bash -c "python -u main.py"
