@@ -13,7 +13,10 @@ google表單 自動填入
 3. 執行 main.py
 
 ```bash
-python path_to_workdir/main.py
+git clone https://github.com/open222333/Python-Clock_In.git clock_in
+cd clock_in
+pip install -r requirements.txt
+python main.py
 ```
 
 ## config.ini
