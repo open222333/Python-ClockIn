@@ -1,7 +1,10 @@
 FROM python:3.9.6-slim-buster
 
-WORKDIR /app
-ADD . /app
+# 設定工作目錄為 /app
+WORKDIR /usr/src/app
+
+# 複製目前目錄下的內容，放進 Docker 容器中的 /app
+ADD . /usr/src/app
 
 COPY ./requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
