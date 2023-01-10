@@ -1,6 +1,7 @@
 config.ini
 log.config
 setting.json
+chromedriver*
 test*
 
 # Byte-compiled / optimized / DLL files
