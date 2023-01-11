@@ -14,18 +14,31 @@ class ClockBot:
         self.shift = shift
         self.day_off = day_off
 
-    def set_driver_path(self, driver_path):
-        # 設定driver
+    def set_driver_path(self, driver_path: str):
+        """設定driver路徑
+
+        Args:
+            driver_path (str): driver路徑
+        """
         self.driver_path = driver_path
 
-    def set_name_xpath(self, name_xpath):
+    def set_shift_type(self, shift_type: str):
+        self.shift_type = shift_type
+
+    def set_name_xpath(self, name_xpath: str):
         self.name_xpath = name_xpath
 
-    def set_shift_xpath(self, shift_xpath):
+    def set_shift_xpath(self, shift_xpath: str):
         self.shift_xpath = shift_xpath
 
-    def set_submit_xpath(self, submit_xpath):
+    def set_submit_xpath(self, submit_xpath: str):
         self.submit_xpath = submit_xpath
+
+    def is_day_off(self):
+        return datetime.today().isoweekday() in self.day_off
+
+    def is_shift(self):
+        return self.shift == self.shift_type
 
     @retry(delay=1)
     def submit_from(self):
@@ -44,7 +57,7 @@ class ClockBot:
         driver.close()
 
     def run(self):
-        if datetime.today().isoweekday() not in self.day_off:
+        if not self.is_day_off() and self.is_shift():
             self.submit_from(self.name, self.shift_xpath)
             return True
         return False

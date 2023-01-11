@@ -25,14 +25,15 @@ err_log_handler.setFormatter(log_formatter)
 err_logger.addHandler(err_log_handler)
 
 
-def clock(shift):
+def clock(shift_xpath, shift):
     try:
         with open(USER_SETTING_PATH, 'r') as f:
             workers = json.load(f)
         for name, info in workers.items():
             cb = ClockBot(FORM_URL, name, info['shift'], info['day_off'])
             cb.set_name_xpath(NAME_XPATH)
-            cb.set_shift_xpath(shift)
+            cb.set_shift_type(shift)
+            cb.set_shift_xpath(shift_xpath)
             cb.set_submit_xpath(SUBMIT_XPATH)
             cb.set_driver_path(DRIVER_PATH)
             result = cb.run()
@@ -48,27 +49,33 @@ try:
     scheduler = schedule.Scheduler()
     scheduler.every().day.at("01:00").do(
         clock,
-        shift=SHIFT_N_OFF_XPATH
+        shift_xpath=SHIFT_N_OFF_XPATH,
+        shift='中班'
     )
     scheduler.every().day.at("07:40").do(
         clock,
-        shift=SHIFT_M_ON_XPATH
+        shift_xpath=SHIFT_M_ON_XPATH,
+        shift='早班'
     )
     scheduler.every().day.at("09:00").do(
         clock,
-        shift=SHIFT_G_OFF_XPATH
+        shift_xpath=SHIFT_G_OFF_XPATH,
+        shift='晚班'
     )
     scheduler.every().day.at("15:40").do(
         clock,
-        shift=SHIFT_N_ON_XPATH
+        shift_xpath=SHIFT_N_ON_XPATH,
+        shift='中班'
     )
     scheduler.every().day.at("17:00").do(
         clock,
-        shift=SHIFT_M_OFF_XPATH
+        shift_xpath=SHIFT_M_OFF_XPATH,
+        shift='早班'
     )
     scheduler.every().day.at("23:40").do(
         clock,
-        shift=SHIFT_G_ON_XPATH
+        shift_xpath=SHIFT_G_ON_XPATH,
+        shift='晚班'
     )
 except Exception as err:
     logger.error(err)
