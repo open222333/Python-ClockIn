@@ -77,6 +77,6 @@ class ClockBot:
 
     def run(self):
         if not self.is_day_off() and self.is_shift():
-            self.submit_from(self.name, self.shift_xpath)
+            self.submit_from()
             return True
         return False
