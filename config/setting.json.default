@@ -1,10 +1,10 @@
 {
   "Tom": {
-    "shitf": "中班",
+    "shift": "中班",
     "day_off": [6, 7]
   },
   "David": {
-    "shitf": "早班",
+    "shift": "早班",
     "day_off": [1, 2]
   }
 }

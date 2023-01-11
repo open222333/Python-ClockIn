@@ -59,12 +59,12 @@ ERROR_LOG_FILE_PATH=
   // 設置資訊
   "Tom": {
 	// 班別
-    "shitf": "中班",
+    "shift": "中班",
 	// 休假 星期一:1  星期日:7
     "day_off": [6, 7]
   },
   "David": {
-    "shitf": "早班",
+    "shift": "早班",
     "day_off": [1, 2]
   }
 }
