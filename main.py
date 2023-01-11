@@ -20,9 +20,9 @@ def clock(shift_xpath, shift, on):
             cb.set_on(on)
             result = cb.run()
             if result:
-                logger.info(f'{name} {info["shift"]} 打卡')
+                logger.info(f'{name} {info["shift"]} clock in')
             else:
-                logger.warning(f'{name} {info["shift"]} 打卡失敗')
+                logger.info(f'{name} {info["shift"]} - {info["day_off"]} do noting')
     except Exception:
         logger.error(traceback.format_exc())
         err_logger.error(traceback.format_exc())

@@ -43,14 +43,14 @@ class ClockBot:
         self.submit_xpath = submit_xpath
 
     def is_day_off(self):
-        '''晚班 上班 - 1, 中班 下班 + 1'''
+        '''晚班 上班 + 1, 中班 下班 - 1'''
         weekday = datetime.today().isoweekday()
         if self.shift_type == '中班' and self.on == False:
-            weekday = (weekday + 1) % 7
+            weekday = (weekday - 1) % 7
             weekday = 7 if weekday == 0 else weekday
             return weekday in self.day_off
         elif self.shift_type == '晚班' and self.on == True:
-            weekday = (weekday - 1) % 7
+            weekday = (weekday + 1) % 7
             weekday = 7 if weekday == 0 else weekday
             return weekday in self.day_off
         else:
