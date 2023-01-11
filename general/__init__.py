@@ -1,9 +1,11 @@
 from configparser import ConfigParser
 from datetime import datetime
+from bs4 import BeautifulSoup
 import os
 import sys
 import json
 import traceback
+import requests
 import logging
 
 
@@ -28,8 +30,8 @@ elif sys.platform == 'win32':
 
 
 FORM_URL = config.get('INFO', 'FORM_URL', fallback='')
+USE_SELENIUM = bool(int(config.get('INFO', 'USE_SELENIUM', fallback='0')))
 DRIVER_PATH = config.get('INFO', 'DRIVER_PATH', fallback='')
-
 
 init_logger = logging.getLogger('init')
 init_log_handler = logging.FileHandler(ERROR_LOG_FILE_PATH)
@@ -55,6 +57,13 @@ except Exception:
     init_logger.error(traceback.format_exc())
 
 
+# 隨機時間範圍
+try:
+    MAX_MINUTE = int(config.get('RANDOM', 'MAX_MINUTE', fallback=0))
+    MIN_MINUTE = int(config.get('RANDOM', 'MIN_MINUTE', fallback=0))
+except Exception:
+    init_logger.error(traceback.format_exc())
+
 # XPATH
 NAME_XPATH = config.get('XPATH', 'NAME_XPATH', fallback='')
 SHIFT_M_ON_XPATH = config.get('XPATH', 'SHIFT_M_ON_XPATH', fallback='')
@@ -73,5 +82,42 @@ try:
     with open(USER_SETTING_PATH, 'r', encoding='utf-8') as f:
         WOKERS_INFO = json.load(f)
 
+except Exception:
+    init_logger.error(traceback.format_exc())
+
+NAME_COLUMN_ID = config.get('SELECTOR', 'NAME_COLUMN_ID', fallback='')
+
+SELECTOR_POST_URL = config.get('SELECTOR', 'SELECTOR_POST_URL', fallback='')
+SELECTOR_CLOCK_IN = config.get('SELECTOR', 'SELECTOR_CLOCK_IN', fallback='')
+SELECTOR_CLOCK_OFF = config.get('SELECTOR', 'SELECTOR_CLOCK_OFF', fallback='')
+
+# 表單資訊
+try:
+    res = requests.get(FORM_URL)
+    soup = BeautifulSoup(res.text, 'lxml')
+
+    MORNING_MSG = config.get('SELECTOR', 'MORNING_MSG', fallback='早班08:00~17:00')
+    NIGHT_MSG = config.get('SELECTOR', 'NIGHT_MSG', fallback='中班16:00~01:00')
+    GRAVEYARD_MSG = config.get('SELECTOR', 'NIGHT_MSG', fallback='晚班00:00~09:00')
+
+    # 上班
+    if SELECTOR_CLOCK_IN == '':
+        SELECTOR_CLOCK_IN = "#mG61Hd > div > div > div > div:nth-child(2) > div > div > div > div > div > div > div:nth-child(2) > label > div > div"
+
+    # 下班
+    if SELECTOR_CLOCK_OFF == '':
+        SELECTOR_CLOCK_OFF = "#mG61Hd > div > div > div > div:nth-child(2) > div > div > div > div > div > div > div:nth-child(4) > label > div > div"
+
+    POST_URL = soup.select_one("#mG61Hd").attrs['action']
+
+    CHECK_BOX_ID = {}
+    for i in soup.select(SELECTOR_CLOCK_IN):
+        if i.attrs['data-field-id'] not in CHECK_BOX_ID:
+            CHECK_BOX_ID['on'] = i.attrs['data-field-id']
+        # CHECK_BOX_ID[i.attrs['data-field-id']].append(i.attrs['data-answer-value'])
+    for i in soup.select(SELECTOR_CLOCK_OFF):
+        if i.attrs['data-field-id'] not in CHECK_BOX_ID:
+            CHECK_BOX_ID['off'] = i.attrs['data-field-id']
+        # CHECK_BOX_ID[i.attrs['data-field-id']].append(i.attrs['data-answer-value'])
 except Exception:
     init_logger.error(traceback.format_exc())

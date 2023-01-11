@@ -3,7 +3,9 @@
 FORM_URL=
 
 ; driver路徑
-DRIVER_PATH=
+;DRIVER_PATH=
+; 使用 selenium 套件，1為開啟 0為關閉 預設為關閉, 使用 requests
+;USE_SELENIUM=
 
 ; 使用者資訊json位置 預設 config/setting.json
 ; USER_SETTING_PATH=
@@ -17,6 +19,10 @@ DRIVER_PATH=
 ; 排班時間設定json檔路徑 預設 config/shift.json
 ; SHIFT_JSON_FILE_PATH=
 
+[RANDOM]
+;MAX_MINUTE=
+;MIN_MINUTE=
+
 [XPATH]
 NAME_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input
 SHIFT_M_ON_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[1]/div/div
@@ -26,3 +32,12 @@ SHIFT_N_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/
 SHIFT_G_ON_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[3]/div/div
 SHIFT_G_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[3]/div/div
 SUBMIT_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span
+
+[SELECTOR]
+;SELECTOR_POST_URL=
+;SELECTOR_CLOCK_IN=
+;SELECTOR_CLOCK_OFF=
+NAME_COLUMN_ID=
+;MORNING_MSG=
+;NIGHT_MSG=
+;GRAVEYARD_MSG=

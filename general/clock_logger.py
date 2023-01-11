@@ -3,10 +3,10 @@ from . import LOG_FILE_PATH, ERROR_LOG_FILE_PATH
 import logging
 
 
-logger = logging.getLogger('clock_bot')
+logger = logging.getLogger('main')
 logger.setLevel(logging.DEBUG)
 
-err_logger = logging.getLogger('clock_bot_error')
+err_logger = logging.getLogger('main_error')
 
 log_handler = logging.FileHandler(LOG_FILE_PATH)
 err_log_handler = logging.FileHandler(ERROR_LOG_FILE_PATH)
