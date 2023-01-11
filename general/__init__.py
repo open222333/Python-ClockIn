@@ -6,19 +6,21 @@ import json
 import traceback
 import logging
 
+
 config = ConfigParser()
-config.read('config/config.ini', encoding='utf-8')
-
-
 if sys.platform == 'linux' or sys.platform == 'darwin':
     # macOS : darwin
     # Linux : linux
+    config.read('config/config.ini', encoding='utf-8')
+
     USER_SETTING_PATH = config.get('INFO', 'USER_SETTING_PATH', fallback='config/setting.json')
     LOG_FILE_PATH = config.get('INFO', 'LOG_FILE_PATH', fallback=f'log/{datetime.now().__format__("%Y-%m-%d")}.log')
     ERROR_LOG_FILE_PATH = config.get('INFO', 'ERROR_LOG_FILE_PATH', fallback=f'log/error-{datetime.now().__format__("%Y-%m-%d")}.log')
     SHIFT_JSON_FILE_PATH = config.get('INFO', 'SHIFT_JSON_FILE_PATH', fallback='config/shift.json')
 elif sys.platform == 'win32':
     # Windows
+    config.read('config\config.ini', encoding='utf-8')
+
     USER_SETTING_PATH = config.get('INFO', 'USER_SETTING_PATH', fallback='config\setting.json')
     LOG_FILE_PATH = config.get('INFO', 'LOG_FILE_PATH', fallback=f'log\{datetime.now().__format__("%Y-%m-%d")}.log')
     ERROR_LOG_FILE_PATH = config.get('INFO', 'ERROR_LOG_FILE_PATH', fallback=f'log\error-{datetime.now().__format__("%Y-%m-%d")}.log')
@@ -65,10 +67,10 @@ SUBMIT_XPATH = config.get('XPATH', 'SUBMIT_XPATH', fallback='')
 
 # 排班資訊
 try:
-    with open(SHIFT_JSON_FILE_PATH, 'r') as f:
+    with open(SHIFT_JSON_FILE_PATH, 'r', encoding='utf-8') as f:
         SHIFT_INFO = json.load(f)
 
-    with open(USER_SETTING_PATH, 'r') as f:
+    with open(USER_SETTING_PATH, 'r', encoding='utf-8') as f:
         WOKERS_INFO = json.load(f)
 
 except Exception:
