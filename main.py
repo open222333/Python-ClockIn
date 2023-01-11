@@ -1,5 +1,4 @@
 import sys
-import json
 import schedule
 import traceback
 from datetime import datetime

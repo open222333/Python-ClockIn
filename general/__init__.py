@@ -1,19 +1,33 @@
 from configparser import ConfigParser
 from datetime import datetime
 import os
+import sys
 import json
 import traceback
 import logging
 
-
 config = ConfigParser()
 config.read('config/config.ini', encoding='utf-8')
 
+
+if sys.platform == 'linux' or sys.platform == 'darwin':
+    # macOS : darwin
+    # Linux : linux
+    USER_SETTING_PATH = config.get('INFO', 'USER_SETTING_PATH', fallback='config/setting.json')
+    LOG_FILE_PATH = config.get('INFO', 'LOG_FILE_PATH', fallback=f'log/{datetime.now().__format__("%Y-%m-%d")}.log')
+    ERROR_LOG_FILE_PATH = config.get('INFO', 'ERROR_LOG_FILE_PATH', fallback=f'log/error-{datetime.now().__format__("%Y-%m-%d")}.log')
+    SHIFT_JSON_FILE_PATH = config.get('INFO', 'SHIFT_JSON_FILE_PATH', fallback='config/shift.json')
+elif sys.platform == 'win32':
+    # Windows
+    USER_SETTING_PATH = config.get('INFO', 'USER_SETTING_PATH', fallback='config\setting.json')
+    LOG_FILE_PATH = config.get('INFO', 'LOG_FILE_PATH', fallback=f'log\{datetime.now().__format__("%Y-%m-%d")}.log')
+    ERROR_LOG_FILE_PATH = config.get('INFO', 'ERROR_LOG_FILE_PATH', fallback=f'log\error-{datetime.now().__format__("%Y-%m-%d")}.log')
+    SHIFT_JSON_FILE_PATH = config.get('INFO', 'SHIFT_JSON_FILE_PATH', fallback='config\shift.json')
+
+
 FORM_URL = config.get('INFO', 'FORM_URL', fallback='')
 DRIVER_PATH = config.get('INFO', 'DRIVER_PATH', fallback='')
-USER_SETTING_PATH = config.get('INFO', 'USER_SETTING_PATH', fallback='config/setting.json')
-LOG_FILE_PATH = config.get('INFO', 'LOG_FILE_PATH', fallback=f'log/{datetime.now().__format__("%Y-%m-%d")}.log')
-ERROR_LOG_FILE_PATH = config.get('INFO', 'ERROR_LOG_FILE_PATH', fallback=f'log/error-{datetime.now().__format__("%Y-%m-%d")}.log')
+
 
 init_logger = logging.getLogger('init')
 init_log_handler = logging.FileHandler(ERROR_LOG_FILE_PATH)
@@ -48,8 +62,6 @@ SHIFT_N_OFF_XPATH = config.get('XPATH', 'SHIFT_N_OFF_XPATH', fallback='')
 SHIFT_G_ON_XPATH = config.get('XPATH', 'SHIFT_G_ON_XPATH', fallback='')
 SHIFT_G_OFF_XPATH = config.get('XPATH', 'SHIFT_G_OFF_XPATH', fallback='')
 SUBMIT_XPATH = config.get('XPATH', 'SUBMIT_XPATH', fallback='')
-
-SHIFT_JSON_FILE_PATH = config.get('INFO', 'SHIFT_JSON_FILE_PATH', fallback='config/shift.json')
 
 # 排班資訊
 try:
