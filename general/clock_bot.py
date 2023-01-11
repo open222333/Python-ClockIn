@@ -66,6 +66,8 @@ class ClockBot:
         options.add_argument('--headless')
         # 使用無痕模式
         options.add_argument("--incognito")
+        # remove the DevTools message
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
         driver = webdriver.Chrome(options=options, executable_path=self.driver_path)
         driver.get(self.url)
