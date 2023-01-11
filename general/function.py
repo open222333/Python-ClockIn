@@ -6,11 +6,11 @@ def get_time_str(total_secends: int) -> str:
     hours = ((total_secends // 60) // 60) % 24
     days = ((total_secends // 60) // 60) // 24
     if days != 0:
-        msg += f"{days}天"
+        msg += f"{str(days).center(3)}天"
     if hours != 0:
-        msg += f"{hours}時"
+        msg += f"{str(hours).center(2)}時"
     if minutes != 0:
-        msg += f"{minutes}分"
+        msg += f"{str(minutes).center(2)}分"
     if seconds != 0:
-        msg += f"{seconds}秒"
+        msg += f"{str(seconds).center(2)}秒"
     return msg

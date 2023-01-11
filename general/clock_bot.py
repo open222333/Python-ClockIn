@@ -22,6 +22,14 @@ class ClockBot:
         """
         self.driver_path = driver_path
 
+    def set_on(self, on:bool):
+        """_summary_
+
+        Args:
+            on (bool): 上班時間輸入True
+        """
+        self.on = on
+
     def set_shift_type(self, shift_type: str):
         self.shift_type = shift_type
 
@@ -35,7 +43,18 @@ class ClockBot:
         self.submit_xpath = submit_xpath
 
     def is_day_off(self):
-        return datetime.today().isoweekday() in self.day_off
+        '''晚班 上班 - 1, 中班 下班 + 1'''
+        weekday = datetime.today().isoweekday()
+        if self.shift_type == '中班' and self.on == False:
+            weekday = (weekday + 1) % 7
+            weekday = 7 if weekday == 0 else weekday
+            return weekday in self.day_off
+        elif self.shift_type == '晚班' and self.on == True:
+            weekday = (weekday - 1) % 7
+            weekday = 7 if weekday == 0 else weekday
+            return weekday in self.day_off
+        else:
+            return weekday in self.day_off
 
     def is_shift(self):
         return self.shift == self.shift_type
