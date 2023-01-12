@@ -51,6 +51,7 @@ def is_overdue(file_path: str, day: int) -> bool:
     """
     nt = datetime.now().date()
     ct = datetime.utcfromtimestamp(os.path.getctime(file_path)).date()
+    logger.debug(f'is_overdue\n{file_path}\n現在時間: {nt} 檔案建立時間: {ct}')
     return (nt - ct).days > day
 
 
@@ -68,14 +69,13 @@ def get_file_extension(file_path):
     return extension
 
 
-def remove_file(file_path: str):
-    os.remove(file_path)
-
-
 def check_logs():
+    """檢查log檔案是否過期
+    """    
     try:
         for log_path in get_log_file(LOG_DIR_PATH):
             if is_overdue(log_path, REMOVE_LOG_DAYS):
-                remove_file(log_path)
+                os.remove(log_path)
+                logger.debug(f'log路徑: {log_path}\nlog是否過期: {is_overdue(log_path, REMOVE_LOG_DAYS)}')
     except:
         logger.error(format_exc())

@@ -134,41 +134,30 @@ class ClockBot:
                 headers=user_agent
             )
 
+            debug_msg = f'form_url={self.url}\npost_url={self.post_url}\nform_data={form_data}\n'
             if r.status_code != 200:
-                debug_msg = f'form_url={self.url}\npost_url={self.post_url}\nform_data={form_data}\n'
                 warring_msg = f'檢查 欄位名稱 ID 是否與表單相同\n{NAME_COLUMN_ID}\n{CHECK_BOX_ID}\n{MORNING_MSG},{NIGHT_MSG},{GRAVEYARD_MSG}'
                 logger.debug(f'{debug_msg}{warring_msg}')
-
+            else:
+                logger.debug(debug_msg)
         except Exception:
             clock_bot_logger.error(traceback.format_exc())
         return r
 
     def run(self):
         if not self.is_day_off() and self.is_shift():
+            logger.debug(f'隨機休眠時間: {self.sleep_sec}')
             if self.sleep_sec:
                 sleep(self.sleep_sec)
             if self.selenium:
-                logger.info(f'{self.name} submit_form_by_selenium')
+                logger.info(f'{self.name} 執行打卡 - submit_form_by_selenium')
                 self.submit_form_by_selenium()
                 threading.Thread(target=self.submit_form_by_selenium).start()
             else:
-                logger.info(f'{self.name} submit_from')
+                logger.info(f'{self.name} 執行打卡 - submit_from')
                 threading.Thread(target=self.submit_from).start()
             return True
         else:
-            logger.info(f'{self.name} do noting')
+            logger.info(f'{self.name} 條件不符不執行打卡 - 假日:{not self.is_day_off()} 班別:{self.is_shift()}')
+            logger.debug(f'假日:{not self.is_day_off()}, 班別:{self.is_shift()}')
             return False
-
-
-class Listener:
-
-    def __init__(self, target_dir) -> None:
-        self.target_dir = target_dir
-
-    def do(self, func, *args, **kwargs):
-        func(*args, **kwargs)
-
-    def run():
-        while True:
-            datetime.now()
-            sleep(1)

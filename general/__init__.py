@@ -85,14 +85,30 @@ except Exception:
     init_logger.error(traceback.format_exc())
 
 # XPATH
-NAME_XPATH = config.get('XPATH', 'NAME_XPATH', fallback='')
-SHIFT_M_ON_XPATH = config.get('XPATH', 'SHIFT_M_ON_XPATH', fallback='')
-SHIFT_M_OFF_XPATH = config.get('XPATH', 'SHIFT_M_OFF_XPATH', fallback='')
-SHIFT_N_ON_XPATH = config.get('XPATH', 'SHIFT_N_ON_XPATH', fallback='')
-SHIFT_N_OFF_XPATH = config.get('XPATH', 'SHIFT_N_OFF_XPATH', fallback='')
-SHIFT_G_ON_XPATH = config.get('XPATH', 'SHIFT_G_ON_XPATH', fallback='')
-SHIFT_G_OFF_XPATH = config.get('XPATH', 'SHIFT_G_OFF_XPATH', fallback='')
-SUBMIT_XPATH = config.get('XPATH', 'SUBMIT_XPATH', fallback='')
+NAME_XPATH = config.get(
+    'XPATH', 'NAME_XPATH',
+    fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input')
+SHIFT_M_ON_XPATH = config.get(
+    'XPATH', 'SHIFT_M_ON_XPATH',
+    fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[1]/div/div')
+SHIFT_M_OFF_XPATH = config.get(
+    'XPATH', 'SHIFT_M_OFF_XPATH',
+    fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[1]/div/div')
+SHIFT_N_ON_XPATH = config.get(
+    'XPATH', 'SHIFT_N_ON_XPATH',
+    fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[2]/div/div')
+SHIFT_N_OFF_XPATH = config.get(
+    'XPATH', 'SHIFT_N_OFF_XPATH',
+    fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[2]/div/div')
+SHIFT_G_ON_XPATH = config.get(
+    'XPATH', 'SHIFT_G_ON_XPATH',
+    fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[3]/div/div')
+SHIFT_G_OFF_XPATH = config.get(
+    'XPATH', 'SHIFT_G_OFF_XPATH',
+    fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[3]/div/div')
+SUBMIT_XPATH = config.get(
+    'XPATH', 'SUBMIT_XPATH',
+    fallback='//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span')
 
 # 排班資訊
 try:

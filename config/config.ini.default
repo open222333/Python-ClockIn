@@ -1,11 +1,12 @@
 [INFO]
-; google表單網址
+; google表單網址(必填)
 FORM_URL=
 
 ; driver路徑
-;DRIVER_PATH=
+; DRIVER_PATH=
+
 ; 使用 selenium 套件，1為開啟 0為關閉 預設為關閉, 使用 requests
-;USE_SELENIUM=
+; USE_SELENIUM=
 
 ; 使用者資訊json位置 預設 config/setting.json
 ; USER_SETTING_PATH=
@@ -13,7 +14,7 @@ FORM_URL=
 ; log紀錄位置 預設 log
 ; LOG_DIR_PATH=
 
-; 是否開啟DEBUG，1為開啟 0為關閉 預設為關閉
+; 會將大量訊息存入log 是否開啟DEBUG，1為開啟 0為關閉 預設為關閉
 ; DEBUG=
 
 ; log紀錄名稱 預設 2023-01-01.log
@@ -32,26 +33,29 @@ FORM_URL=
 ; REMOVE_LOG_DAYS
 
 [RANDOM]
+; 隨機時間 單位分鐘
 ; MAX_MINUTE=
 ; MIN_MINUTE=
 
 [XPATH]
-NAME_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input
-SHIFT_M_ON_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[1]/div/div
-SHIFT_M_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[1]/div/div
-SHIFT_N_ON_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[2]/div/div
-SHIFT_N_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[2]/div/div
-SHIFT_G_ON_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[3]/div/div
-SHIFT_G_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[3]/div/div
-SUBMIT_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span
+; selenium 使用xpath
+; NAME_XPATH=
+; SHIFT_M_ON_XPATH=
+; SHIFT_M_OFF_XPATH=
+; SHIFT_N_ON_XPATH=
+; SHIFT_N_OFF_XPATH=
+; SHIFT_G_ON_XPATH=
+; SHIFT_G_OFF_XPATH=
+; SUBMIT_XPATH=
 
 [SELECTOR]
-
+; requests bs4使用 selector
 ; SELECTOR_POST_URL=
 ; SELECTOR_NAME_COLUMN =
 ; SELECTOR_CLOCK_IN=
 ; SELECTOR_CLOCK_OFF=
 
+; 欄位名稱
 ; MORNING_MSG=
 ; NIGHT_MSG=
 ; GRAVEYARD_MSG=
