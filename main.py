@@ -1,12 +1,11 @@
 import sys
 import schedule
 import traceback
-import threading
 from random import randint
 from datetime import datetime
 from time import sleep
 from general.clock_bot import ClockBot
-from general.function import get_time_str, random_time
+from general.function import get_time_str, check_logs
 from general import WOKERS_INFO, SHIFT_INFO, FORM_URL, NAME_XPATH, SUBMIT_XPATH, SHIFT_N_ON_XPATH, SHIFT_N_OFF_XPATH, SHIFT_G_ON_XPATH, SHIFT_G_OFF_XPATH, SHIFT_M_ON_XPATH, SHIFT_M_OFF_XPATH, DRIVER_PATH, USE_SELENIUM, POST_URL, CHECK_BOX_ID, NAME_COLUMN_ID, MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG, MAX_MINUTE, MIN_MINUTE
 from general.clock_logger import logger, err_logger
 
@@ -14,6 +13,8 @@ from general.clock_logger import logger, err_logger
 def clock(shift_xpath, shift, on, msg):
     try:
         for name, info in WOKERS_INFO.items():
+            s = '上班' if on else '下班'
+            logger.info(f'{name} {shift} {s}')
             cb = ClockBot(FORM_URL, name, info['shift'], info['day_off'])
             if USE_SELENIUM:
                 cb.set_selenium()
@@ -35,41 +36,19 @@ def clock(shift_xpath, shift, on, msg):
             cb.set_shift_type(shift)
             # 設置上下班
             cb.set_duty(on)
-            # 多執行序
-            threading.Thread(target=cb.run).start()
+            cb.run()
     except Exception:
         logger.error(traceback.format_exc())
         err_logger.error(traceback.format_exc())
 
 try:
     scheduler = schedule.Scheduler()
-    scheduler.every().day.at(SHIFT_INFO['中班']['off']).do(
-        clock,
-        shift_xpath=SHIFT_N_OFF_XPATH,
-        shift='中班',
-        on=False,
-        msg=NIGHT_MSG
-    )
     scheduler.every().day.at(SHIFT_INFO['早班']['on']).do(
         clock,
         shift_xpath=SHIFT_M_ON_XPATH,
         shift='早班',
         on=True,
         msg=MORNING_MSG
-    )
-    scheduler.every().day.at(SHIFT_INFO['晚班']['off']).do(
-        clock,
-        shift_xpath=SHIFT_G_OFF_XPATH,
-        shift='晚班',
-        on=False,
-        msg=GRAVEYARD_MSG
-    )
-    scheduler.every().day.at(SHIFT_INFO['中班']['on']).do(
-        clock,
-        shift_xpath=SHIFT_N_ON_XPATH,
-        shift='中班',
-        on=True,
-        msg=NIGHT_MSG
     )
     scheduler.every().day.at(SHIFT_INFO['早班']['off']).do(
         clock,
@@ -78,6 +57,20 @@ try:
         on=False,
         msg=MORNING_MSG
     )
+    scheduler.every().day.at(SHIFT_INFO['中班']['on']).do(
+        clock,
+        shift_xpath=SHIFT_N_ON_XPATH,
+        shift='中班',
+        on=True,
+        msg=NIGHT_MSG
+    )
+    scheduler.every().day.at(SHIFT_INFO['中班']['off']).do(
+        clock,
+        shift_xpath=SHIFT_N_OFF_XPATH,
+        shift='中班',
+        on=False,
+        msg=NIGHT_MSG
+    )
     scheduler.every().day.at(SHIFT_INFO['晚班']['on']).do(
         clock,
         shift_xpath=SHIFT_G_ON_XPATH,
@@ -85,9 +78,19 @@ try:
         on=True,
         msg=GRAVEYARD_MSG
     )
+    scheduler.every().day.at(SHIFT_INFO['晚班']['off']).do(
+        clock,
+        shift_xpath=SHIFT_G_OFF_XPATH,
+        shift='晚班',
+        on=False,
+        msg=GRAVEYARD_MSG
+    )
 except Exception:
     logger.error(traceback.format_exc())
     err_logger.error(traceback.format_exc())
+
+# 刪除過期log
+scheduler.every().day.at("00:00").do(check_logs)
 
 if __name__ == '__main__':
     keep_sec = 0

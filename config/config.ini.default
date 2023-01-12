@@ -46,9 +46,9 @@ SHIFT_G_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/
 SUBMIT_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span
 
 [SELECTOR]
-NAME_COLUMN_ID=
 
 ; SELECTOR_POST_URL=
+; SELECTOR_NAME_COLUMN =
 ; SELECTOR_CLOCK_IN=
 ; SELECTOR_CLOCK_OFF=
 

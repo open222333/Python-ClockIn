@@ -1,6 +1,7 @@
 from configparser import ConfigParser
 from datetime import datetime
 from bs4 import BeautifulSoup
+import re
 import os
 import sys
 import json
@@ -104,9 +105,8 @@ try:
 except Exception:
     init_logger.error(traceback.format_exc())
 
-NAME_COLUMN_ID = config.get('SELECTOR', 'NAME_COLUMN_ID', fallback='')
-
 SELECTOR_POST_URL = config.get('SELECTOR', 'SELECTOR_POST_URL', fallback='')
+SELECTOR_NAME_COLUMN = config.get('SELECTOR', 'SELECTOR_NAME_COLUMN', fallback='')
 SELECTOR_CLOCK_IN = config.get('SELECTOR', 'SELECTOR_CLOCK_IN', fallback='')
 SELECTOR_CLOCK_OFF = config.get('SELECTOR', 'SELECTOR_CLOCK_OFF', fallback='')
 
@@ -117,15 +117,19 @@ try:
 
     MORNING_MSG = config.get('SELECTOR', 'MORNING_MSG', fallback='早班08:00~17:00')
     NIGHT_MSG = config.get('SELECTOR', 'NIGHT_MSG', fallback='中班16:00~01:00')
-    GRAVEYARD_MSG = config.get('SELECTOR', 'NIGHT_MSG', fallback='晚班00:00~09:00')
+    GRAVEYARD_MSG = config.get('SELECTOR', 'GRAVEYARD_MSG', fallback='晚班00:00~09:00')
 
-    # 上班
+    # 上班 選取格ID selector
     if SELECTOR_CLOCK_IN == '':
         SELECTOR_CLOCK_IN = "#mG61Hd > div > div > div > div:nth-child(2) > div > div > div > div > div > div > div:nth-child(2) > label > div > div"
 
-    # 下班
+    # 下班 選取格ID selector
     if SELECTOR_CLOCK_OFF == '':
         SELECTOR_CLOCK_OFF = "#mG61Hd > div > div > div > div:nth-child(2) > div > div > div > div > div > div > div:nth-child(4) > label > div > div"
+
+    # 取得 填寫名稱ID selector
+    if SELECTOR_NAME_COLUMN == '':
+        SELECTOR_NAME_COLUMN = "#mG61Hd > div.RH5hzf.RLS9Fe > div > div.o3Dpx > div:nth-child(1) > div"
 
     POST_URL = soup.select_one("#mG61Hd").attrs['action']
 
@@ -133,10 +137,10 @@ try:
     for i in soup.select(SELECTOR_CLOCK_IN):
         if i.attrs['data-field-id'] not in CHECK_BOX_ID:
             CHECK_BOX_ID['on'] = i.attrs['data-field-id']
-        # CHECK_BOX_ID[i.attrs['data-field-id']].append(i.attrs['data-answer-value'])
     for i in soup.select(SELECTOR_CLOCK_OFF):
         if i.attrs['data-field-id'] not in CHECK_BOX_ID:
             CHECK_BOX_ID['off'] = i.attrs['data-field-id']
-        # CHECK_BOX_ID[i.attrs['data-field-id']].append(i.attrs['data-answer-value'])
+
+    NAME_COLUMN_ID = re.findall(r'[\d]{0,20}', soup.select_one(SELECTOR_NAME_COLUMN).attrs['data-params'].split('[')[3])[0]
 except Exception:
     init_logger.error(traceback.format_exc())

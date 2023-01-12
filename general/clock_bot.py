@@ -1,17 +1,18 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from . import ERROR_LOG_FILE_PATH, MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG
+
+from . import ERROR_LOG_FILE_PATH, MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG, NAME_COLUMN_ID, CHECK_BOX_ID
 from .clock_logger import logger
 
+from datetime import datetime
+from fake_useragent import FakeUserAgent
 from retry import retry
 from time import sleep
-from datetime import datetime
 
 import logging
 import traceback
-
+import threading
 import requests
-from fake_useragent import FakeUserAgent
 
 
 clock_bot_logger = logging.getLogger('clock_bot')
@@ -65,6 +66,7 @@ class ClockBot:
     def is_day_off(self):
         '''晚班 上班 + 1, 中班 下班 - 1'''
         weekday = datetime.today().isoweekday()
+
         if self.shift_type == '中班' and self.duty == False:
             weekday = (weekday - 1) % 7
             weekday = 7 if weekday == 0 else weekday
@@ -131,9 +133,10 @@ class ClockBot:
                 data=form_data,
                 headers=user_agent
             )
+
             if r.status_code != 200:
                 debug_msg = f'form_url={self.url}\npost_url={self.post_url}\nform_data={form_data}\n'
-                warring_msg = f'檢查欄位名稱是否與表單一至 {MORNING_MSG}, {NIGHT_MSG}, {GRAVEYARD_MSG}'
+                warring_msg = f'檢查 欄位名稱 ID 是否與表單相同\n{NAME_COLUMN_ID}\n{CHECK_BOX_ID}\n{MORNING_MSG},{NIGHT_MSG},{GRAVEYARD_MSG}'
                 logger.debug(f'{debug_msg}{warring_msg}')
 
         except Exception:
@@ -145,14 +148,15 @@ class ClockBot:
             if self.sleep_sec:
                 sleep(self.sleep_sec)
             if self.selenium:
-                clock_bot_logger.info(f'{self.name} {self.shift_type} submit_form_by_selenium')
+                logger.info(f'{self.name} submit_form_by_selenium')
                 self.submit_form_by_selenium()
+                threading.Thread(target=self.submit_form_by_selenium).start()
             else:
-                clock_bot_logger.info(f'{self.name} {self.shift_type} submit_from')
-                self.submit_from()
+                logger.info(f'{self.name} submit_from')
+                threading.Thread(target=self.submit_from).start()
             return True
         else:
-            clock_bot_logger.info(f'{self.name} {self.shift_type} do noting')
+            logger.info(f'{self.name} do noting')
             return False
 
 
