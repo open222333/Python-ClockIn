@@ -1,15 +1,18 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from . import ERROR_LOG_FILE_PATH
+from . import ERROR_LOG_FILE_PATH, MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG
+from .clock_logger import logger
 
 from retry import retry
 from time import sleep
 from datetime import datetime
 
 import logging
+import traceback
 
 import requests
 from fake_useragent import FakeUserAgent
+
 
 clock_bot_logger = logging.getLogger('clock_bot')
 clock_bot_log_handler = logging.FileHandler(ERROR_LOG_FILE_PATH)
@@ -26,7 +29,7 @@ class ClockBot:
         self.shift = shift
         self.day_off = day_off
         self.selenium = False
-        self.sleep_sec = 0
+        self.sleep_sec = None
 
     def set_selenium(self):
         self.selenium = True
@@ -100,45 +103,68 @@ class ClockBot:
         self.check_box_value = check_box_value
         self.off_id = off_id
 
-    def set_sleep_sec(self, minute:int):
-        self.sleep_sec =  minute * 60
+    def set_sleep_sec(self, minute: int):
+        self.sleep_sec = minute * 60
 
     def submit_from(self):
         """須先執行 set_requests_info()
         """
-        ua = FakeUserAgent()
-        user_agent = {
-            'Referer': self.url,
-            'User-Agent': ua.chrome
-        }
-        form_data = {
-            f'entry.{self.name_id}': self.name,
-            'draftResponse': [],
-            'pageHistory': 0
-        }
-        if self.duty:
-            form_data[f'entry.{self.on_id}'] = self.check_box_value
-        else:
-            form_data[f'entry.{self.off_id}'] = self.check_box_value
+        try:
+            ua = FakeUserAgent()
 
-        r = requests.post(
-            self.post_url,
-            data=form_data,
-            headers=user_agent
-        )
+            user_agent = {
+                'Referer': self.url,
+                'User-Agent': ua.chrome
+            }
+
+            form_data = {
+                f'entry.{self.name_id}': self.name
+            }
+
+            if self.duty:
+                form_data[f'entry.{self.on_id}'] = self.check_box_value
+            else:
+                form_data[f'entry.{self.off_id}'] = self.check_box_value
+
+            r = requests.post(
+                self.post_url,
+                data=form_data,
+                headers=user_agent
+            )
+            if r.status_code != 200:
+                debug_msg = f'form_url={self.url}\npost_url={self.post_url}\nform_data={form_data}\n'
+                warring_msg = f'檢查欄位名稱是否與表單一至 {MORNING_MSG}, {NIGHT_MSG}, {GRAVEYARD_MSG}'
+                logger.debug(f'{debug_msg}{warring_msg}')
+
+        except Exception:
+            clock_bot_logger.error(traceback.format_exc())
         return r
 
     def run(self):
         if not self.is_day_off() and self.is_shift():
             if self.sleep_sec:
                 sleep(self.sleep_sec)
-                if self.selenium:
-                    self.submit_form_by_selenium()
-                else:
-                    self.submit_from()
-                clock_bot_logger.info(f'{self.name} {self.shift_type} clock in')
+            if self.selenium:
+                clock_bot_logger.info(f'{self.name} {self.shift_type} submit_form_by_selenium')
+                self.submit_form_by_selenium()
+            else:
+                clock_bot_logger.info(f'{self.name} {self.shift_type} submit_from')
+                self.submit_from()
             return True
-        clock_bot_logger.info(f'{self.name} {self.shift_type} - {self.day_off} do noting')
-        return False
+        else:
+            clock_bot_logger.info(f'{self.name} {self.shift_type} do noting')
+            return False
 
 
+class Listener:
+
+    def __init__(self, target_dir) -> None:
+        self.target_dir = target_dir
+
+    def do(self, func, *args, **kwargs):
+        func(*args, **kwargs)
+
+    def run():
+        while True:
+            datetime.now()
+            sleep(1)

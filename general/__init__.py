@@ -16,22 +16,40 @@ if sys.platform == 'linux' or sys.platform == 'darwin':
     config.read('config/config.ini', encoding='utf-8')
 
     USER_SETTING_PATH = config.get('INFO', 'USER_SETTING_PATH', fallback='config/setting.json')
-    LOG_FILE_PATH = config.get('INFO', 'LOG_FILE_PATH', fallback=f'log/{datetime.now().__format__("%Y-%m-%d")}.log')
-    ERROR_LOG_FILE_PATH = config.get('INFO', 'ERROR_LOG_FILE_PATH', fallback=f'log/error-{datetime.now().__format__("%Y-%m-%d")}.log')
     SHIFT_JSON_FILE_PATH = config.get('INFO', 'SHIFT_JSON_FILE_PATH', fallback='config/shift.json')
 elif sys.platform == 'win32':
     # Windows
     config.read('config\config.ini', encoding='utf-8')
 
     USER_SETTING_PATH = config.get('INFO', 'USER_SETTING_PATH', fallback='config\setting.json')
-    LOG_FILE_PATH = config.get('INFO', 'LOG_FILE_PATH', fallback=f'log\{datetime.now().__format__("%Y-%m-%d")}.log')
-    ERROR_LOG_FILE_PATH = config.get('INFO', 'ERROR_LOG_FILE_PATH', fallback=f'log\error-{datetime.now().__format__("%Y-%m-%d")}.log')
     SHIFT_JSON_FILE_PATH = config.get('INFO', 'SHIFT_JSON_FILE_PATH', fallback='config\shift.json')
 
 
 FORM_URL = config.get('INFO', 'FORM_URL', fallback='')
-USE_SELENIUM = bool(int(config.get('INFO', 'USE_SELENIUM', fallback='0')))
+USE_SELENIUM = bool(int(config.get('INFO', 'USE_SELENIUM', fallback=0)))
 DRIVER_PATH = config.get('INFO', 'DRIVER_PATH', fallback='')
+
+DEBUG = bool(int(config.get('INFO', 'DEBUG', fallback=0)))
+
+LOG_FILE_NAME = config.get('INFO', 'LOG_FILE_NAME', fallback=f'{datetime.now().__format__("%Y-%m-%d")}.log')
+ERROR_LOG_FILE_NAME = config.get('INFO', 'ERROR_LOG_FILE_NAME', fallback=f'error-{datetime.now().__format__("%Y-%m-%d")}.log')
+SCHEDULE_LOG_FILE_NAME = config.get('INFO', 'SCHEDULE_LOG_FILE_NAME', fallback=f'schedule-{datetime.now().__format__("%Y-%m-%d")}.log')
+
+LOG_DIR_PATH = config.get('INFO', 'LOG_DIR_PATH', fallback='log')
+REMOVE_LOG_DAYS = int(config.get('INFO', 'LOG_DIR_PATH', fallback=7))
+
+if sys.platform == 'linux' or sys.platform == 'darwin':
+    # macOS : darwin
+    # Linux : linux
+    LOG_FILE_PATH = f"{LOG_DIR_PATH}/{LOG_FILE_NAME}"
+    ERROR_LOG_FILE_PATH = f"{LOG_DIR_PATH}/{ERROR_LOG_FILE_NAME}"
+    SCHEDULE_LOG_FILE_PATH = f"{LOG_DIR_PATH}/{SCHEDULE_LOG_FILE_NAME}"
+elif sys.platform == 'win32':
+    # Windows
+    LOG_FILE_PATH = f"{LOG_DIR_PATH}\{LOG_FILE_NAME}"
+    ERROR_LOG_FILE_PATH = f"{LOG_DIR_PATH}\{ERROR_LOG_FILE_NAME}"
+    SCHEDULE_LOG_FILE_PATH = f"{LOG_DIR_PATH}\{SCHEDULE_LOG_FILE_NAME}"
+
 
 init_logger = logging.getLogger('init')
 init_log_handler = logging.FileHandler(ERROR_LOG_FILE_PATH)
@@ -40,18 +58,19 @@ init_log_handler.setFormatter(log_formatter)
 init_logger.addHandler(init_log_handler)
 
 try:
-    if not os.path.exists(os.path.dirname(LOG_FILE_PATH)):
-        os.makedirs(os.path.dirname(LOG_FILE_PATH))
+    if not os.path.exists(LOG_DIR_PATH):
+        os.makedirs(LOG_DIR_PATH)
 
     if not os.path.exists(LOG_FILE_PATH):
         with open(LOG_FILE_PATH, 'w') as f:
             pass
 
-    if not os.path.exists(os.path.dirname(ERROR_LOG_FILE_PATH)):
-        os.makedirs(os.path.dirname(ERROR_LOG_FILE_PATH))
-
     if not os.path.exists(ERROR_LOG_FILE_PATH):
         with open(ERROR_LOG_FILE_PATH, 'w') as f:
+            pass
+
+    if not os.path.exists(SCHEDULE_LOG_FILE_PATH):
+        with open(SCHEDULE_LOG_FILE_PATH, 'w') as f:
             pass
 except Exception:
     init_logger.error(traceback.format_exc())

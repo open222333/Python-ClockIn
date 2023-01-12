@@ -41,7 +41,6 @@ def clock(shift_xpath, shift, on, msg):
         logger.error(traceback.format_exc())
         err_logger.error(traceback.format_exc())
 
-
 try:
     scheduler = schedule.Scheduler()
     scheduler.every().day.at(SHIFT_INFO['中班']['off']).do(

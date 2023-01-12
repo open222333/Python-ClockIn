@@ -10,18 +10,30 @@ FORM_URL=
 ; 使用者資訊json位置 預設 config/setting.json
 ; USER_SETTING_PATH=
 
-; log紀錄位置 預設 log/2023-01-01.log
-; LOG_FILE_PATH=
+; log紀錄位置 預設 log
+; LOG_DIR_PATH=
 
-; error log紀錄位置 預設 log/error-2023-01-01.log
-; ERROR_LOG_FILE_PATH=
+; 是否開啟DEBUG，1為開啟 0為關閉 預設為關閉
+; DEBUG=
+
+; log紀錄名稱 預設 2023-01-01.log
+; LOG_FILE_NAME=
+
+; error log紀錄名稱 預設 error-2023-01-01.log
+; ERROR_LOG_FILE_NAME=
+
+; schedule log紀錄名稱 預設 schedule-2023-01-01.log
+; SCHEDULE_LOG_FILE_NAME=
 
 ; 排班時間設定json檔路徑 預設 config/shift.json
 ; SHIFT_JSON_FILE_PATH=
 
+; 創建天數超過指定天數 刪除log 預設 7
+; REMOVE_LOG_DAYS
+
 [RANDOM]
-;MAX_MINUTE=
-;MIN_MINUTE=
+; MAX_MINUTE=
+; MIN_MINUTE=
 
 [XPATH]
 NAME_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input
@@ -34,10 +46,12 @@ SHIFT_G_OFF_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/
 SUBMIT_XPATH=//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span
 
 [SELECTOR]
-;SELECTOR_POST_URL=
-;SELECTOR_CLOCK_IN=
-;SELECTOR_CLOCK_OFF=
 NAME_COLUMN_ID=
-;MORNING_MSG=
-;NIGHT_MSG=
-;GRAVEYARD_MSG=
+
+; SELECTOR_POST_URL=
+; SELECTOR_CLOCK_IN=
+; SELECTOR_CLOCK_OFF=
+
+; MORNING_MSG=
+; NIGHT_MSG=
+; GRAVEYARD_MSG=
