@@ -48,26 +48,27 @@ FORM_URL=
 ; 使用者資訊json位置 預設 config/setting.json
 ; USER_SETTING_PATH=
 
-; log紀錄位置 預設 log
-; LOG_DIR_PATH=
+; ******log設定******
+; 關閉log功能 輸入選項 (true, True, 1) 預設 不關閉
+; LOG_DISABLE=1
 
-; 會將大量訊息存入log 是否開啟DEBUG，1為開啟 0為關閉 預設為關閉
-; DEBUG=
+; logs路徑 預設 logs
+; LOG_PATH=
 
-; log紀錄名稱 預設 2023-01-01.log
-; LOG_FILE_NAME=
+; 關閉紀錄log檔案 輸入選項 (true, True, 1)  預設 不關閉
+; LOG_FILE_DISABLE=1
 
-; error log紀錄名稱 預設 error-2023-01-01.log
-; ERROR_LOG_FILE_NAME=
+; 設定紀錄log等級 DEBUG,INFO,WARNING,ERROR,CRITICAL 預設WARNING
+; LOG_LEVEL=
 
-; schedule log紀錄名稱 預設 schedule-2023-01-01.log
-; SCHEDULE_LOG_FILE_NAME=
+; 指定log大小(輸入數字) 單位byte, 與 LOG_DAYS 只能輸入一項 若都輸入 LOG_SIZE優先
+; LOG_SIZE=
+
+; 指定保留log天數(輸入數字) 預設7
+; LOG_DAYS=
 
 ; 排班時間設定json檔路徑 預設 config/shift.json
 ; SHIFT_JSON_FILE_PATH=
-
-; 創建天數超過指定天數 刪除log 預設 7
-; REMOVE_LOG_DAYS
 
 [RANDOM]
 ; 隨機時間 單位分鐘
