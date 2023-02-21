@@ -1,13 +1,22 @@
-import sys
-import schedule
-import traceback
-from random import randint
-from datetime import datetime
-from time import sleep
 from general.clock_bot import ClockBot
-from general.function import get_time_str, check_logs
-from general import WOKERS_INFO, SHIFT_INFO, FORM_URL, NAME_XPATH, SUBMIT_XPATH, SHIFT_N_ON_XPATH, SHIFT_N_OFF_XPATH, SHIFT_G_ON_XPATH, SHIFT_G_OFF_XPATH, SHIFT_M_ON_XPATH, SHIFT_M_OFF_XPATH, DRIVER_PATH, USE_SELENIUM, POST_URL, CHECK_BOX_ID, NAME_COLUMN_ID, MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG, MAX_MINUTE, MIN_MINUTE
-from general.clock_logger import logger, err_logger
+from general.function import get_time_str
+from general import (
+    WOKERS_INFO, SHIFT_INFO, FORM_URL,
+    NAME_XPATH, SUBMIT_XPATH,
+    SHIFT_N_ON_XPATH, SHIFT_N_OFF_XPATH,
+    SHIFT_G_ON_XPATH, SHIFT_G_OFF_XPATH,
+    SHIFT_M_ON_XPATH, SHIFT_M_OFF_XPATH,
+    DRIVER_PATH, USE_SELENIUM,
+    POST_URL, CHECK_BOX_ID, NAME_COLUMN_ID,
+    MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG,
+    MAX_MINUTE, MIN_MINUTE
+)
+from general import logger, err_logger
+from datetime import datetime
+from random import randint
+from time import sleep
+import schedule
+import sys
 
 
 def clock(shift_xpath, shift, on, msg):
@@ -37,9 +46,10 @@ def clock(shift_xpath, shift, on, msg):
             # 設置上下班
             cb.set_duty(on)
             cb.run()
-    except Exception:
-        logger.error(traceback.format_exc())
-        err_logger.error(traceback.format_exc())
+    except Exception as err:
+        logger.error(err, exc_info=True)
+        err_logger.error(err, exc_info=True)
+
 
 try:
     scheduler = schedule.Scheduler()
@@ -85,12 +95,9 @@ try:
         on=False,
         msg=GRAVEYARD_MSG
     )
-except Exception:
-    logger.error(traceback.format_exc())
-    err_logger.error(traceback.format_exc())
-
-# 刪除過期log
-scheduler.every().day.at("00:00").do(check_logs)
+except Exception as err:
+    logger.error(err, exc_info=True)
+    err_logger.error(err, exc_info=True)
 
 if __name__ == '__main__':
     keep_sec = 0
@@ -102,8 +109,8 @@ if __name__ == '__main__':
             bar = f"\r已執行 {get_time_str(keep_sec)}"
             sys.stdout.write(bar)
             sys.stdout.flush()
-        except Exception:
-            logger.error(traceback.format_exc())
-            err_logger.error(traceback.format_exc())
+        except Exception as err:
+            logger.error(err, exc_info=True)
+            err_logger.error(err, exc_info=True)
         keep_sec += 1
         sleep(1)

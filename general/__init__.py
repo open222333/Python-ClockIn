@@ -1,13 +1,14 @@
 from configparser import ConfigParser
-from datetime import datetime
 from bs4 import BeautifulSoup
+from .clock_logger import Log
 import re
 import os
 import sys
 import json
-import traceback
+import socket
 import requests
 import logging
+from traceback import print_exc
 
 
 config = ConfigParser()
@@ -25,64 +26,68 @@ elif sys.platform == 'win32':
     USER_SETTING_PATH = config.get('INFO', 'USER_SETTING_PATH', fallback='config\setting.json')
     SHIFT_JSON_FILE_PATH = config.get('INFO', 'SHIFT_JSON_FILE_PATH', fallback='config\shift.json')
 
+# log設定
+try:
+    HOSTNAME = socket.gethostname()
+
+    LOG_PATH = config.get('INFO', 'LOG_PATH', fallback='logs')
+
+    # 關閉log
+    LOG_DISABLE = config.getboolean('INFO', 'LOG_DISABLE', fallback=False)
+
+    # 關閉記錄檔案
+    LOG_FILE_DISABLE = config.getboolean('INFO', 'LOG_FILE_DISABLE', fallback=False)
+
+    # 設定紀錄log等級 預設WARNING, DEBUG,INFO,WARNING,ERROR,CRITICAL
+    LOG_LEVEL = config.get('INFO', 'LOG_LEVEL', fallback='WARNING')
+
+    # 指定log大小(輸入數字) 單位byte
+    LOG_SIZE = config.getint('INFO', 'LOG_SIZE', fallback=0)
+    # 指定保留log天數(輸入數字) 預設7
+    LOG_DAYS = config.getint('INFO', 'LOG_DAYS', fallback=7)
+
+    log_setting = {
+        'HOSTNAME': HOSTNAME,
+        'LOG_PATH': LOG_PATH,
+        'LOG_DISABLE': LOG_DISABLE,
+        'LOG_FILE_DISABLE': LOG_FILE_DISABLE,
+        'LOG_LEVEL': LOG_LEVEL,
+        'LOG_SIZE': LOG_SIZE,
+        'LOG_DAYS': LOG_DAYS
+    }
+except Exception as err:
+    print_exc()
+
+# 建立log資料夾
+if not os.path.exists(LOG_PATH) and not LOG_DISABLE:
+    os.makedirs(LOG_PATH)
+
+if LOG_DISABLE:
+    logging.disable()
+
+logger = Log(__name__)
+if not LOG_FILE_DISABLE:
+    logger.set_date_handler()
+logger.set_msg_handler()
+if LOG_LEVEL:
+    logger.set_level(LOG_LEVEL)
+
+err_logger = Log(f'{__name__}-error')
+if not LOG_FILE_DISABLE:
+    err_logger.set_date_handler()
+err_logger.set_msg_handler()
+
 
 FORM_URL = config.get('INFO', 'FORM_URL', fallback='')
 USE_SELENIUM = bool(int(config.get('INFO', 'USE_SELENIUM', fallback=0)))
 DRIVER_PATH = config.get('INFO', 'DRIVER_PATH', fallback='')
 
-DEBUG = bool(int(config.get('INFO', 'DEBUG', fallback=0)))
-
-LOG_FILE_NAME = config.get('INFO', 'LOG_FILE_NAME', fallback=f'{datetime.now().__format__("%Y-%m-%d")}.log')
-ERROR_LOG_FILE_NAME = config.get('INFO', 'ERROR_LOG_FILE_NAME', fallback=f'error-{datetime.now().__format__("%Y-%m-%d")}.log')
-SCHEDULE_LOG_FILE_NAME = config.get('INFO', 'SCHEDULE_LOG_FILE_NAME', fallback=f'schedule-{datetime.now().__format__("%Y-%m-%d")}.log')
-
-LOG_DIR_PATH = config.get('INFO', 'LOG_DIR_PATH', fallback='log')
-REMOVE_LOG_DAYS = int(config.get('INFO', 'LOG_DIR_PATH', fallback=7))
-
-if sys.platform == 'linux' or sys.platform == 'darwin':
-    # macOS : darwin
-    # Linux : linux
-    LOG_FILE_PATH = f"{LOG_DIR_PATH}/{LOG_FILE_NAME}"
-    ERROR_LOG_FILE_PATH = f"{LOG_DIR_PATH}/{ERROR_LOG_FILE_NAME}"
-    SCHEDULE_LOG_FILE_PATH = f"{LOG_DIR_PATH}/{SCHEDULE_LOG_FILE_NAME}"
-elif sys.platform == 'win32':
-    # Windows
-    LOG_FILE_PATH = f"{LOG_DIR_PATH}\{LOG_FILE_NAME}"
-    ERROR_LOG_FILE_PATH = f"{LOG_DIR_PATH}\{ERROR_LOG_FILE_NAME}"
-    SCHEDULE_LOG_FILE_PATH = f"{LOG_DIR_PATH}\{SCHEDULE_LOG_FILE_NAME}"
-
-
-init_logger = logging.getLogger('init')
-init_log_handler = logging.FileHandler(ERROR_LOG_FILE_PATH)
-log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-init_log_handler.setFormatter(log_formatter)
-init_logger.addHandler(init_log_handler)
-
-try:
-    if not os.path.exists(LOG_DIR_PATH):
-        os.makedirs(LOG_DIR_PATH)
-
-    if not os.path.exists(LOG_FILE_PATH):
-        with open(LOG_FILE_PATH, 'w') as f:
-            pass
-
-    if not os.path.exists(ERROR_LOG_FILE_PATH):
-        with open(ERROR_LOG_FILE_PATH, 'w') as f:
-            pass
-
-    if not os.path.exists(SCHEDULE_LOG_FILE_PATH):
-        with open(SCHEDULE_LOG_FILE_PATH, 'w') as f:
-            pass
-except Exception:
-    init_logger.error(traceback.format_exc())
-
-
 # 隨機時間範圍
 try:
-    MAX_MINUTE = int(config.get('RANDOM', 'MAX_MINUTE', fallback=0))
-    MIN_MINUTE = int(config.get('RANDOM', 'MIN_MINUTE', fallback=0))
-except Exception:
-    init_logger.error(traceback.format_exc())
+    MAX_MINUTE = config.getint('RANDOM', 'MAX_MINUTE', fallback=0)
+    MIN_MINUTE = config.getint('RANDOM', 'MIN_MINUTE', fallback=0)
+except Exception as err:
+    err_logger.error(err, exc_info=True)
 
 # XPATH
 NAME_XPATH = config.get(
@@ -118,8 +123,8 @@ try:
     with open(USER_SETTING_PATH, 'r', encoding='utf-8') as f:
         WOKERS_INFO = json.load(f)
 
-except Exception:
-    init_logger.error(traceback.format_exc())
+except Exception as err:
+    err_logger.error(err, exc_info=True)
 
 SELECTOR_POST_URL = config.get('SELECTOR', 'SELECTOR_POST_URL', fallback='')
 SELECTOR_NAME_COLUMN = config.get('SELECTOR', 'SELECTOR_NAME_COLUMN', fallback='')
@@ -158,5 +163,5 @@ try:
             CHECK_BOX_ID['off'] = i.attrs['data-field-id']
 
     NAME_COLUMN_ID = re.findall(r'[\d]{0,20}', soup.select_one(SELECTOR_NAME_COLUMN).attrs['data-params'].split('[')[3])[0]
-except Exception:
-    init_logger.error(traceback.format_exc())
+except Exception as err:
+    err_logger.error(err, exc_info=True)

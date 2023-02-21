@@ -1,25 +1,14 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from . import ERROR_LOG_FILE_PATH, MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG, NAME_COLUMN_ID, CHECK_BOX_ID
-from .clock_logger import logger
-
+from . import MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG, NAME_COLUMN_ID, CHECK_BOX_ID
+from . import logger, err_logger
 from datetime import datetime
 from fake_useragent import FakeUserAgent
 from retry import retry
 from time import sleep
-
-import logging
-import traceback
 import threading
 import requests
-
-
-clock_bot_logger = logging.getLogger('clock_bot')
-clock_bot_log_handler = logging.FileHandler(ERROR_LOG_FILE_PATH)
-log_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-clock_bot_log_handler.setFormatter(log_formatter)
-clock_bot_logger.addHandler(clock_bot_log_handler)
 
 
 class ClockBot:
@@ -137,16 +126,16 @@ class ClockBot:
             debug_msg = f'form_url={self.url}\npost_url={self.post_url}\nform_data={form_data}\n'
             if r.status_code != 200:
                 warring_msg = f'檢查 欄位名稱 ID 是否與表單相同\n{NAME_COLUMN_ID}\n{CHECK_BOX_ID}\n{MORNING_MSG},{NIGHT_MSG},{GRAVEYARD_MSG}'
-                logger.debug(f'{debug_msg}{warring_msg}')
+                logger.error(f'\n{debug_msg}\n{warring_msg}')
             else:
                 logger.debug(debug_msg)
-        except Exception:
-            clock_bot_logger.error(traceback.format_exc())
+        except Exception as err:
+            logger.error(err, exc_info=True)
+            err_logger.error(err, exc_info=True)
         return r
 
     def run(self):
         if not self.is_day_off() and self.is_shift():
-            logger.debug(f'隨機休眠時間: {self.sleep_sec}')
             if self.sleep_sec:
                 sleep(self.sleep_sec)
             if self.selenium:
@@ -159,5 +148,4 @@ class ClockBot:
             return True
         else:
             logger.info(f'{self.name} 條件不符不執行打卡 - 假日:{not self.is_day_off()} 班別:{self.is_shift()}')
-            logger.debug(f'假日:{not self.is_day_off()}, 班別:{self.is_shift()}')
             return False

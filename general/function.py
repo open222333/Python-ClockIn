@@ -1,8 +1,6 @@
-from . import LOG_DIR_PATH, REMOVE_LOG_DAYS
-from .clock_logger import logger
 from datetime import datetime, timedelta
 from random import randint
-from traceback import format_exc
+from . import logger
 import os
 
 
@@ -55,27 +53,7 @@ def is_overdue(file_path: str, day: int) -> bool:
     return (nt - ct).days > day
 
 
-def get_log_file(log_dir_path: str):
-    log_files = []
-    for file in os.listdir(log_dir_path):
-        if get_file_extension(file) == '.log':
-            log_files.append(f"{os.path.abspath(log_dir_path)}/{file}")
-    return log_files
-
-
 def get_file_extension(file_path):
     '''取得 副檔名'''
     _, extension = os.path.splitext(file_path)  # 路徑 以及副檔名
     return extension
-
-
-def check_logs():
-    """檢查log檔案是否過期
-    """    
-    try:
-        for log_path in get_log_file(LOG_DIR_PATH):
-            if is_overdue(log_path, REMOVE_LOG_DAYS):
-                os.remove(log_path)
-                logger.debug(f'log路徑: {log_path}\nlog是否過期: {is_overdue(log_path, REMOVE_LOG_DAYS)}')
-    except:
-        logger.error(format_exc())
