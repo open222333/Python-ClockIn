@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from . import MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG, NAME_COLUMN_ID, CHECK_BOX_ID
+from . import TELEGRAM_API_KEY, TELEGRAM_CHAT_ID
 from . import logger, err_logger
 from datetime import datetime
 from fake_useragent import FakeUserAgent
@@ -51,6 +52,18 @@ class ClockBot:
 
     def set_submit_xpath(self, submit_xpath: str):
         self.submit_xpath = submit_xpath
+
+    def send_message(self, message: str):
+        if TELEGRAM_API_KEY:
+            url = f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage'
+            data = {
+                'chat_id': TELEGRAM_CHAT_ID,
+                'text': message
+            }
+            response = requests.post(url, json=data)
+            if response.status_code != 200:
+                logger.error('無法發送訊息至 Telegram')
+                err_logger.error('無法發送訊息至 Telegram')
 
     def is_day_off(self):
         '''晚班 上班 + 1, 中班 下班 - 1'''
@@ -136,6 +149,7 @@ class ClockBot:
 
     def run(self):
         if not self.is_day_off() and self.is_shift():
+            self.send_message(f'{datetime.now().__format__("%Y-%m-%d %H:%M:%S")} - {self.name} 執行打卡')
             if self.sleep_sec:
                 sleep(self.sleep_sec)
             if self.selenium:

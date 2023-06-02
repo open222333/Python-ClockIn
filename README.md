@@ -97,6 +97,12 @@ FORM_URL=
 ; MORNING_MSG=
 ; NIGHT_MSG=
 ; GRAVEYARD_MSG=
+
+[TELEGRAM]
+; Telegram Bot 的 API 金鑰
+; TELEGRAM_API_KEY=
+; Telegram 使用者的 Chat ID
+; TELEGRAM_CHAT_ID=
 ```
 
 ## setting.json

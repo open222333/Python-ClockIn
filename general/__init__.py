@@ -165,3 +165,15 @@ try:
     NAME_COLUMN_ID = re.findall(r'[\d]{0,20}', soup.select_one(SELECTOR_NAME_COLUMN).attrs['data-params'].split('[')[3])[0]
 except Exception as err:
     err_logger.error(err, exc_info=True)
+
+
+# Telegram Bot 的 API 金鑰
+TELEGRAM_API_KEY = config.get('TELEGRAM', 'TELEGRAM_API_KEY', fallback=None)
+
+# Telegram 使用者的 Chat ID
+if TELEGRAM_API_KEY:
+    response = requests.get(f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/getUpdates')
+    data = response.json()
+    chat_id = data['result'][0]['message']['chat']['id']
+
+TELEGRAM_CHAT_ID = config.get('TELEGRAM', 'TELEGRAM_CHAT_ID', fallback=chat_id)
