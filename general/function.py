@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from . import TELEGRAM_API_KEY, TELEGRAM_CHAT_ID
+import requests
 from random import randint
 from . import logger
 import os
@@ -57,3 +59,15 @@ def get_file_extension(file_path):
     '''取得 副檔名'''
     _, extension = os.path.splitext(file_path)  # 路徑 以及副檔名
     return extension
+
+
+def send_message(message: str):
+    if TELEGRAM_API_KEY:
+        url = f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage'
+        data = {
+            'chat_id': TELEGRAM_CHAT_ID,
+            'text': message
+        }
+        response = requests.post(url, json=data)
+        if response.status_code != 200:
+            logger.error('無法發送訊息至 Telegram')

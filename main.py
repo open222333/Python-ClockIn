@@ -1,5 +1,5 @@
 from general.clock_bot import ClockBot
-from general.function import get_time_str
+from general.function import get_time_str, send_message
 from general import (
     WOKERS_INFO, SHIFT_INFO, FORM_URL,
     NAME_XPATH, SUBMIT_XPATH,
@@ -47,6 +47,7 @@ def clock(shift_xpath, shift, on, msg):
             cb.set_duty(on)
             cb.run()
     except Exception as err:
+        send_message(f'{datetime.now().__format__("%Y-%m-%d %H:%M:%S")} - {err}')
         logger.error(err, exc_info=True)
         err_logger.error(err, exc_info=True)
 
@@ -96,6 +97,7 @@ try:
         msg=GRAVEYARD_MSG
     )
 except Exception as err:
+    send_message(f'{datetime.now().__format__("%Y-%m-%d %H:%M:%S")} - {err}')
     logger.error(err, exc_info=True)
     err_logger.error(err, exc_info=True)
 
