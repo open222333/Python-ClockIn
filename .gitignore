@@ -3,6 +3,7 @@ log.config
 setting.json
 chromedriver*
 test*
+logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
