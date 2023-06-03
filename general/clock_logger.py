@@ -82,7 +82,7 @@ class Log():
             self.logfile_name = self.log_name
 
         self.now_time = datetime.now().__format__(date_format)
-        self.log_file = os.path.join(self.log_path, f'{self.logfile_name}')
+        self.log_file = os.path.join(self.log_path, f'{self.logfile_name}.{self.now_time}.log')
         handler = TimedRotatingFileHandler(self.log_file, when=when, backupCount=amount)
         handler.namer = my_namer
         handler.setFormatter(self.formatter)
@@ -105,7 +105,7 @@ class Log():
         if not self.logfile_name:
             self.logfile_name = self.log_name
 
-        self.log_file = os.path.join(self.log_path, f'{self.logfile_name}')
+        self.log_file = os.path.join(self.log_path, f'{self.logfile_name}.log')
         handler = RotatingFileHandler(self.log_file, maxBytes=size, backupCount=file_amount)
         handler.setFormatter(self.formatter)
         self.logger.addHandler(handler)

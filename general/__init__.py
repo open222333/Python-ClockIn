@@ -65,16 +65,16 @@ if not os.path.exists(LOG_PATH) and not LOG_DISABLE:
 if LOG_DISABLE:
     logging.disable()
 
-logger = Log()
+logger = Log('all')
 if not LOG_FILE_DISABLE:
-    logger.set_date_handler()
+    logger.set_file_handler()
 logger.set_msg_handler()
 if LOG_LEVEL:
     logger.set_level(LOG_LEVEL)
 
 err_logger = Log('error')
 if not LOG_FILE_DISABLE:
-    err_logger.set_date_handler()
+    err_logger.set_file_handler()
 err_logger.set_msg_handler()
 
 USE_SELENIUM = config.getboolean('INFO', 'USE_SELENIUM', fallback=False)
