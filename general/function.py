@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from . import TELEGRAM_API_KEY, TELEGRAM_CHAT_ID
+from . import TELEGRAM_API_KEY, TELEGRAM_CHAT_ID, CREATE_CHAT_ID
 import requests
 from random import randint
 from . import logger
@@ -68,6 +68,11 @@ def send_message(message: str):
             'chat_id': TELEGRAM_CHAT_ID,
             'text': message
         }
-        response = requests.post(url, json=data)
+        response = requests.post(url, data=data)
         if response.status_code != 200:
-            logger.error('無法發送訊息至 Telegram')
+            logger.error(f'無法發送訊息至 Telegram:\n{response.json()}')
+            data = {
+                'chat_id': CREATE_CHAT_ID,
+                'text': f'無法發送訊息至 Telegram:\n{response.json()}'
+            }
+            requests.post(url, data=data)

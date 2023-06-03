@@ -171,9 +171,10 @@ except Exception as err:
 TELEGRAM_API_KEY = config.get('TELEGRAM', 'TELEGRAM_API_KEY', fallback=None)
 
 # Telegram 使用者的 Chat ID
-chat_id = None
+CREATE_CHAT_ID = None
 if TELEGRAM_API_KEY:
     response = requests.get(f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/getUpdates')
     data = response.json()
-    chat_id = data['result'][0]['message']['chat']['id']
-TELEGRAM_CHAT_ID = config.get('TELEGRAM', 'TELEGRAM_CHAT_ID', fallback=chat_id)
+    CREATE_CHAT_ID = data['result'][0]['message']['chat']['id']
+
+TELEGRAM_CHAT_ID = config.get('TELEGRAM', 'TELEGRAM_CHAT_ID', fallback=CREATE_CHAT_ID)
