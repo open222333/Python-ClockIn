@@ -37,10 +37,7 @@ google表單 自動填入
 ```ini
 [INFO]
 ; google表單網址(必填)
-FORM_URL=
-
-; driver路徑
-; DRIVER_PATH=
+; FORM_URL=
 
 ; 使用 selenium 套件，1為開啟 0為關閉 預設為關閉, 使用 requests
 ; USE_SELENIUM=
@@ -75,7 +72,9 @@ FORM_URL=
 ; MAX_MINUTE=
 ; MIN_MINUTE=
 
-[XPATH]
+[SELENIUM_INFO]
+; driver路徑
+; DRIVER_PATH=
 ; selenium 使用xpath
 ; NAME_XPATH=
 ; SHIFT_M_ON_XPATH=
@@ -86,7 +85,7 @@ FORM_URL=
 ; SHIFT_G_OFF_XPATH=
 ; SUBMIT_XPATH=
 
-[SELECTOR]
+[REQUESTS_INFO]
 ; requests bs4使用 selector
 ; SELECTOR_POST_URL=
 ; SELECTOR_NAME_COLUMN =

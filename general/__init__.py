@@ -1,6 +1,3 @@
-from configparser import ConfigParser
-from bs4 import BeautifulSoup
-from .clock_logger import Log
 import re
 import os
 import sys
@@ -9,6 +6,9 @@ import socket
 import requests
 import logging
 from traceback import print_exc
+from configparser import ConfigParser
+from bs4 import BeautifulSoup
+from .clock_logger import Log
 
 
 config = ConfigParser()
@@ -65,22 +65,20 @@ if not os.path.exists(LOG_PATH) and not LOG_DISABLE:
 if LOG_DISABLE:
     logging.disable()
 
-logger = Log(__name__)
+logger = Log()
 if not LOG_FILE_DISABLE:
     logger.set_date_handler()
 logger.set_msg_handler()
 if LOG_LEVEL:
     logger.set_level(LOG_LEVEL)
 
-err_logger = Log(f'{__name__}-error')
+err_logger = Log('error')
 if not LOG_FILE_DISABLE:
     err_logger.set_date_handler()
 err_logger.set_msg_handler()
 
-
+USE_SELENIUM = config.getboolean('INFO', 'USE_SELENIUM', fallback=False)
 FORM_URL = config.get('INFO', 'FORM_URL', fallback='')
-USE_SELENIUM = bool(int(config.get('INFO', 'USE_SELENIUM', fallback=0)))
-DRIVER_PATH = config.get('INFO', 'DRIVER_PATH', fallback='')
 
 # 隨機時間範圍
 try:
@@ -89,30 +87,31 @@ try:
 except Exception as err:
     err_logger.error(err, exc_info=True)
 
-# XPATH
+# SELENIUM_INFO
+DRIVER_PATH = config.get('SELENIUM_INFO', 'DRIVER_PATH', fallback='')
 NAME_XPATH = config.get(
-    'XPATH', 'NAME_XPATH',
+    'SELENIUM_INFO', 'NAME_XPATH',
     fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input')
 SHIFT_M_ON_XPATH = config.get(
-    'XPATH', 'SHIFT_M_ON_XPATH',
+    'SELENIUM_INFO', 'SHIFT_M_ON_XPATH',
     fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[1]/div/div')
 SHIFT_M_OFF_XPATH = config.get(
-    'XPATH', 'SHIFT_M_OFF_XPATH',
+    'SELENIUM_INFO', 'SHIFT_M_OFF_XPATH',
     fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[1]/div/div')
 SHIFT_N_ON_XPATH = config.get(
-    'XPATH', 'SHIFT_N_ON_XPATH',
+    'SELENIUM_INFO', 'SHIFT_N_ON_XPATH',
     fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[2]/div/div')
 SHIFT_N_OFF_XPATH = config.get(
-    'XPATH', 'SHIFT_N_OFF_XPATH',
+    'SELENIUM_INFO', 'SHIFT_N_OFF_XPATH',
     fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[2]/div/div')
 SHIFT_G_ON_XPATH = config.get(
-    'XPATH', 'SHIFT_G_ON_XPATH',
+    'SELENIUM_INFO', 'SHIFT_G_ON_XPATH',
     fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[2]/label[3]/div/div')
 SHIFT_G_OFF_XPATH = config.get(
-    'XPATH', 'SHIFT_G_OFF_XPATH',
+    'SELENIUM_INFO', 'SHIFT_G_OFF_XPATH',
     fallback='//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[4]/label[3]/div/div')
 SUBMIT_XPATH = config.get(
-    'XPATH', 'SUBMIT_XPATH',
+    'SELENIUM_INFO', 'SUBMIT_XPATH',
     fallback='//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span')
 
 # 排班資訊
@@ -126,19 +125,21 @@ try:
 except Exception as err:
     err_logger.error(err, exc_info=True)
 
-SELECTOR_POST_URL = config.get('SELECTOR', 'SELECTOR_POST_URL', fallback='')
-SELECTOR_NAME_COLUMN = config.get('SELECTOR', 'SELECTOR_NAME_COLUMN', fallback='')
-SELECTOR_CLOCK_IN = config.get('SELECTOR', 'SELECTOR_CLOCK_IN', fallback='')
-SELECTOR_CLOCK_OFF = config.get('SELECTOR', 'SELECTOR_CLOCK_OFF', fallback='')
+# REQUESTS_INFO
+SELECTOR_POST_URL = config.get('REQUESTS_INFO', 'SELECTOR_POST_URL', fallback='')
+SELECTOR_NAME_COLUMN = config.get('REQUESTS_INFO', 'SELECTOR_NAME_COLUMN', fallback='')
+SELECTOR_CLOCK_IN = config.get('REQUESTS_INFO', 'SELECTOR_CLOCK_IN', fallback='')
+SELECTOR_CLOCK_OFF = config.get('REQUESTS_INFO', 'SELECTOR_CLOCK_OFF', fallback='')
 
 # 表單資訊
 try:
     res = requests.get(FORM_URL)
     soup = BeautifulSoup(res.text, 'lxml')
 
-    MORNING_MSG = config.get('SELECTOR', 'MORNING_MSG', fallback='早班08:00~17:00')
-    NIGHT_MSG = config.get('SELECTOR', 'NIGHT_MSG', fallback='中班16:00~01:00')
-    GRAVEYARD_MSG = config.get('SELECTOR', 'GRAVEYARD_MSG', fallback='晚班00:00~09:00')
+    # REQUESTS_INFO
+    MORNING_MSG = config.get('REQUESTS_INFO', 'MORNING_MSG', fallback='早班08:00~17:00')
+    NIGHT_MSG = config.get('REQUESTS_INFO', 'NIGHT_MSG', fallback='中班16:00~01:00')
+    GRAVEYARD_MSG = config.get('REQUESTS_INFO', 'GRAVEYARD_MSG', fallback='晚班00:00~09:00')
 
     # 上班 選取格ID selector
     if SELECTOR_CLOCK_IN == '':

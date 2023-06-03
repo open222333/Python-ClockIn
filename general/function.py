@@ -1,26 +1,35 @@
-from datetime import datetime, timedelta
 from . import TELEGRAM_API_KEY, TELEGRAM_CHAT_ID, CREATE_CHAT_ID
-import requests
-from random import randint
 from . import logger
+
+from datetime import datetime, timedelta
+from random import randint
+from typing import Union
+import requests
 import os
 
 
-def get_time_str(total_secends: int) -> str:
-    '''依照秒數 回傳時間'''
+def get_time_str(total_secends: Union[int, float]) -> str:
+    """依照秒數 回傳中文時間
+
+    Args:
+        total_secends (int): 總秒數
+
+    Returns:
+        str: 回傳時間
+    """
     msg = ''
     seconds = total_secends % 60
     minutes = (total_secends // 60) % 60
     hours = ((total_secends // 60) // 60) % 24
     days = ((total_secends // 60) // 60) // 24
     if days != 0:
-        msg += f"{str(days).center(3)}天"
+        msg += f"{int(days)}天"
     if hours != 0:
-        msg += f"{str(hours).center(2)}時"
+        msg += f"{int(hours)}時"
     if minutes != 0:
-        msg += f"{str(minutes).center(2)}分"
+        msg += f"{int(minutes)}分"
     if seconds != 0:
-        msg += f"{str(seconds).center(2)}秒"
+        msg += f"{int(round(seconds, 0))}秒"
     return msg
 
 
@@ -39,29 +48,25 @@ def random_time(time_s: str, max_minute: int, min_minute: int = 0) -> str:
     return (struct_t + timedelta(minutes=randint(min_minute, max_minute))).strftime("%H:%M")
 
 
-def is_overdue(file_path: str, day: int) -> bool:
-    """檢查 檔案創建時間是否超過指定天數
+def get_file_extension(file_path: str) -> str:
+    """取得 副檔名
 
     Args:
         file_path (str): 檔案路徑
-        day (int): 指定天數
 
     Returns:
-        bool: _description_
+        str: 副檔名
     """
-    nt = datetime.now().date()
-    ct = datetime.utcfromtimestamp(os.path.getctime(file_path)).date()
-    logger.debug(f'is_overdue\n{file_path}\n現在時間: {nt} 檔案建立時間: {ct}')
-    return (nt - ct).days > day
-
-
-def get_file_extension(file_path):
-    '''取得 副檔名'''
     _, extension = os.path.splitext(file_path)  # 路徑 以及副檔名
     return extension
 
 
 def send_message(message: str):
+    """發送訊息到TG
+
+    Args:
+        message (str): 訊息內容
+    """
     if TELEGRAM_API_KEY:
         url = f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/sendMessage'
         data = {

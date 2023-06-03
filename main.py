@@ -24,13 +24,21 @@ def clock(shift_xpath, shift, on, msg):
         for name, info in WOKERS_INFO.items():
             s = '上班' if on else '下班'
             logger.info(f'{name} {shift} {s}')
-            cb = ClockBot(FORM_URL, name, info['shift'], info['day_off'])
+            cb = ClockBot(
+                url=FORM_URL,
+                name=name,
+                shift=info['shift'],
+                day_off=info['day_off']
+            )
             if USE_SELENIUM:
-                cb.set_selenium()
-                cb.set_name_xpath(NAME_XPATH)
-                cb.set_shift_xpath(shift_xpath)
-                cb.set_submit_xpath(SUBMIT_XPATH)
-                cb.set_driver_path(DRIVER_PATH)
+                cb.set_selenium(True)
+                cb.set_selenium_info(
+                    shift_type=shift,
+                    name_xpath=NAME_XPATH,
+                    shift_xpath=shift_xpath,
+                    submit_xpath=SUBMIT_XPATH,
+                    driver_path=DRIVER_PATH
+                )
             else:
                 cb.set_requests_info(
                     post_url=POST_URL,
