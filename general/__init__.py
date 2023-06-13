@@ -84,6 +84,10 @@ FORM_URL = config.get('INFO', 'FORM_URL', fallback='')
 try:
     MAX_MINUTE = config.getint('RANDOM', 'MAX_MINUTE', fallback=0)
     MIN_MINUTE = config.getint('RANDOM', 'MIN_MINUTE', fallback=0)
+    if MIN_MINUTE > MAX_MINUTE:
+        temp = MAX_MINUTE
+        MAX_MINUTE = MIN_MINUTE
+        MIN_MINUTE = temp
 except Exception as err:
     err_logger.error(err, exc_info=True)
 
@@ -176,6 +180,12 @@ CREATE_CHAT_ID = None
 if not TELEGRAM_API_KEY:
     response = requests.get(f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/getUpdates')
     data = response.json()
-    CREATE_CHAT_ID = data['result'][0]['message']['chat']['id']
+    try:
+        CREATE_CHAT_ID = data['result'][0]['message']['chat']['id']
+    except Exception as err:
+        logger.error(err, exc_info=True)
+        CREATE_CHAT_ID = None
 
 TELEGRAM_CHAT_ID = config.get('TELEGRAM', 'TELEGRAM_CHAT_ID', fallback=CREATE_CHAT_ID)
+
+TEST = config.getboolean('INFO', 'TEST', fallback=False)

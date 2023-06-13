@@ -9,7 +9,7 @@ from general import (
     DRIVER_PATH, USE_SELENIUM,
     POST_URL, CHECK_BOX_ID, NAME_COLUMN_ID,
     MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG,
-    MAX_MINUTE, MIN_MINUTE
+    MAX_MINUTE, MIN_MINUTE, TEST
 )
 from general import logger, err_logger
 from datetime import datetime
@@ -48,7 +48,7 @@ def clock(shift_xpath, shift, on, msg):
                     check_box_value=msg
                 )
             # 設置隨機時間
-            cb.set_sleep_sec(randint(MIN_MINUTE, MAX_MINUTE))
+            cb.set_sleep_sec(randint(MIN_MINUTE * 60, MAX_MINUTE * 60))
             # 設置班別
             cb.set_shift_type(shift)
             # 設置上下班
@@ -112,7 +112,10 @@ except Exception as err:
 if __name__ == '__main__':
     keep_sec = 0
     start_datetime = datetime.now().__format__('%Y-%m-%d %H:%M:%S')
-    print(f'開始執行時間: {start_datetime}')
+    if TEST:
+        print(f'測試 開始執行時間: {start_datetime}')
+    else:
+        print(f'開始執行時間: {start_datetime}')
     while True:
         try:
             scheduler.run_pending()

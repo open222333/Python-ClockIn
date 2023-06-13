@@ -1,4 +1,7 @@
 [INFO]
+; 測試
+; TEST=
+
 ; google表單網址(必填)
 ; FORM_URL=
 

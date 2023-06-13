@@ -1,8 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from . import MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG, NAME_COLUMN_ID, CHECK_BOX_ID
-from .function import send_message
+from . import MORNING_MSG, NIGHT_MSG, GRAVEYARD_MSG, NAME_COLUMN_ID, CHECK_BOX_ID, TEST
+from .function import send_message, get_time_str
 from . import logger, err_logger
 from datetime import datetime
 from fake_useragent import FakeUserAgent
@@ -28,7 +28,7 @@ class ClockBot:
         self.shift = shift
         self.day_off = day_off
         self.selenium = False
-        self.sleep_sec = None
+        self.sleep_sec = 0
 
     def set_selenium(self, selenium: bool):
         """設置 是否使用selenium
@@ -38,13 +38,13 @@ class ClockBot:
         """
         self.selenium = selenium
 
-    def set_sleep_sec(self, minute: int):
+    def set_sleep_sec(self, second: int):
         """設置休眠時間
 
         Args:
-            minute (int): 分鐘
+            second (int): 秒數
         """
-        self.sleep_sec = minute * 60
+        self.sleep_sec = second
 
     def set_duty(self, duty: bool):
         """設置上班下班\n
@@ -131,6 +131,13 @@ class ClockBot:
             driver.get(self.url)
             driver.find_element(By.XPATH, self.name_xpath).send_keys(self.name)
             driver.find_element(By.XPATH, self.shift).click()
+            logger.debug(f'等待 {get_time_str(self.sleep_sec)}')
+            sleep(self.sleep_sec)
+            s = '上班' if self.duty else '下班'
+            if TEST:
+                send_message(f'{datetime.now().__format__("%Y-%m-%d %H:%M:%S")} - 測試訊息: {self.name} {self.shift_type} {s} 執行打卡')
+            else:
+                send_message(f'{datetime.now().__format__("%Y-%m-%d %H:%M:%S")} - {self.name} {self.shift_type} {s} 執行打卡')
             driver.find_element(By.XPATH, self.submit_xpath).click()
             driver.close()
         except Exception as err:
@@ -175,6 +182,13 @@ class ClockBot:
             else:
                 form_data[f'entry.{self.off_id}'] = self.check_box_value
 
+            logger.debug(f'等待 {get_time_str(self.sleep_sec)}')
+            sleep(self.sleep_sec)
+            s = '上班' if self.duty else '下班'
+            if TEST:
+                send_message(f'{datetime.now().__format__("%Y-%m-%d %H:%M:%S")} - 測試訊息: {self.name} {self.shift_type} {s} 執行打卡')
+            else:
+                send_message(f'{datetime.now().__format__("%Y-%m-%d %H:%M:%S")} - {self.name} {self.shift_type} {s} 執行打卡')
             r = requests.post(
                 self.post_url,
                 data=form_data,
@@ -201,10 +215,6 @@ class ClockBot:
             bool: 成功執行回傳True 其餘回傳False
         """
         if not self.is_day_off() and self.is_shift():
-            s = '上班' if self.duty else '下班'
-            send_message(f'{datetime.now().__format__("%Y-%m-%d %H:%M:%S")} - {self.name} {self.shift_type} {s} 執行打卡')
-            if self.sleep_sec:
-                sleep(self.sleep_sec)
             if self.selenium:
                 logger.info(f'{self.name} 執行打卡 - submit_form_by_selenium')
                 threading.Thread(target=self.submit_form_by_selenium).start()
