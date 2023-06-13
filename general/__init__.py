@@ -173,7 +173,7 @@ TELEGRAM_API_KEY = config.get('TELEGRAM', 'TELEGRAM_API_KEY', fallback=None)
 
 # Telegram 使用者的 Chat ID
 CREATE_CHAT_ID = None
-if TELEGRAM_API_KEY:
+if not TELEGRAM_API_KEY:
     response = requests.get(f'https://api.telegram.org/bot{TELEGRAM_API_KEY}/getUpdates')
     data = response.json()
     CREATE_CHAT_ID = data['result'][0]['message']['chat']['id']
